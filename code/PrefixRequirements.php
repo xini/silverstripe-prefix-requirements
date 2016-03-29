@@ -32,8 +32,8 @@ class Prefix_Requirements_Backend extends Requirements_Backend {
 			$combinedFilesFolder = trim($combinedFilesFolder, '/');
 			$combinedFilesFolderPath = $combinedFilesFolder . '/';
 			// Make the folder if necessary
-			if(!file_exists($basePath . $combinedFileFolder)) {
-				Filesystem::makeFolder($basePath . $combinedFileFolder);
+			if(!file_exists($basePath . $combinedFilesFolder)) {
+				Filesystem::makeFolder($basePath . $combinedFilesFolder);
 			}
 			// split path and file
 			$filepath = substr($fileOrUrl, 0, strrpos($fileOrUrl, '/')) . '/';
