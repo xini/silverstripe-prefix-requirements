@@ -28,3 +28,7 @@ Requirements::set_combined_files_folder({foldername});
 ``` 
 
 Default is `ASSETS_DIR . '/_combinedfiles'`.
+
+This module doesn't handle css and js in the CMS. 
+
+Because the files are moved to the configured `CombinedFilesFolder`, please make sure you only use absolute paths relative to the website root for includes in your css and js files. E.g. `/themes/images/icon.png`, not `../images/icon.png`.
