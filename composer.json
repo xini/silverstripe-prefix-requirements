@@ -1,5 +1,5 @@
 {
-	"name": "xini/silverstripe-prefix-requirements",
+	"name": "innoweb/silverstripe-prefix-requirements",
 	"description": "Adds a mtime prefix to all requirements. Replaces the default ?{mtime} suffix to make the requirements fully cacheable.",
 	"type": "silverstripe-module",
 	"license": "BSD-3-Clause",
@@ -15,5 +15,8 @@
 	},
 	"extra": {
 		"installer-name": "prefix-requirements"
+	},
+	"replace": {
+		"xini/silverstripe-prefix-requirements": "self.version"
 	}
 }

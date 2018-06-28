@@ -16,7 +16,7 @@ It is recommended to minify CSS files using Grunt or Gulp (or any other techniqu
 
 ## Installation
 
-1. composer require xini/silverstripe-prefix-requirements dev-master (or download or git clone the module into a ‘prefix-requirements’ directory in your webroot)
+1. composer require innoweb/silverstripe-prefix-requirements dev-master (or download or git clone the module into a ‘prefix-requirements’ directory in your webroot)
 2. run dev/build (http://www.mysite.com/dev/build?flush=all)
 
 ## Usage
