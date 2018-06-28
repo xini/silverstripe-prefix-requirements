@@ -12,7 +12,9 @@ It is recommended to minify CSS files using Grunt or Gulp (or any other techniqu
 
 ## Requirements
 
-* SilverStripe ~3.1
+* SilverStripe CMS 4.x
+
+Note: this version is compatible with SilverStripe 4. For SilverStripe 3, please see the [1.x release line](https://github.com/xini/silverstripe-prefix-requirements/tree/1).
 
 ## Installation
 
@@ -24,7 +26,7 @@ It is recommended to minify CSS files using Grunt or Gulp (or any other techniqu
 The prefixed files are generated and stored in the default `CombinedFilesFolder` of the `Requirements` class. You can use the following entry in your _config.php to specify where the generated files are stored:
 
 ```
-Requirements::set_combined_files_folder({foldername});
+\SilverStripe\View\Requirements::set_combined_files_folder({foldername});
 ``` 
 
 Default is `ASSETS_DIR . '/_combinedfiles'`.
