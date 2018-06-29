@@ -55,7 +55,8 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         }
 
         // get file name
-        $fileName = substr($absolutePath, strrpos($absolutePath, '/') + 1);
+        $pathArr = explode(DIRECTORY_SEPARATOR, $absolutePath);
+        $fileName = end($pathArr);
 
         // get prefix
         $prefix = filemtime($absolutePath) . '-';
