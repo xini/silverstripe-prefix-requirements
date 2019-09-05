@@ -12,8 +12,9 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Core\Manifest\ModuleResource;
 use SilverStripe\Core\Manifest\ResourceURLGenerator;
 use SilverStripe\View\Requirements;
+use SilverStripe\Core\Flushable;
 
-class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements ResourceURLGenerator {
+class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements ResourceURLGenerator, Flushable {
 
     public function urlForResource($relativePath)
     {
@@ -53,50 +54,53 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         foreach ($rules as $from => $to) {
             $relativeURL = preg_replace($from, $to, $relativeURL);
         }
-
-        // get file name
-        $pathArr = explode(DIRECTORY_SEPARATOR, $absolutePath);
-        $fileName = end($pathArr);
-
-        // get prefix
-        $prefix = filemtime($absolutePath) . '-';
-
-        // get combined files folder, prefix file name and put in folder
-        $assetHandler = Requirements::backend()->getAssetHandler();
-        $combinedFilesFolder = Requirements::backend()->getCombinedFilesFolder();
-
-        $prefixedFilePath = $assetHandler->getContentURL(
-            File::join_paths(
-                $combinedFilesFolder,
-                $prefix . $fileName
-            ),
-            function() use ($absolutePath) {
-                return file_get_contents($absolutePath);
-            }
-        );
-
-        // remove old prefixed files
-        $filesystem = $assetHandler->getFilesystem();
-        $combinedFilesFolderContents = $filesystem->listContents($combinedFilesFolder);
-        foreach ($combinedFilesFolderContents as $item) {
-            $itemFileName = $item['basename'];
-            if ($itemFileName !== $prefix . $fileName) {
-                if (preg_match('/[0-9]*-' . $fileName . '/', $itemFileName)) {
-                    $assetHandler->removeContent(
-                        File::join_paths(
-                            $combinedFilesFolder,
-                            $itemFileName
-                        )
-                    );
+        
+        if ($exists && is_file($absolutePath)) {
+            
+            // get file name
+            $pathArr = explode(DIRECTORY_SEPARATOR, $absolutePath);
+            $fileName = end($pathArr);
+            
+            // get prefix
+            $prefix = base_convert(md5_file($absolutePath), 16, 36) . '-';
+            
+            // get combined files folder, prefix file name and put in folder
+            $assetHandler = Requirements::backend()->getAssetHandler();
+            $combinedFilesFolder = Requirements::backend()->getCombinedFilesFolder();
+            
+            $prefixedFilePath = $assetHandler->getContentURL(
+                File::join_paths(
+                    $combinedFilesFolder,
+                    $prefix . $fileName
+                ),
+                function() use ($absolutePath) {
+                    return file_get_contents($absolutePath);
                 }
+            );
+            
+            // build url to prefixed file in combined files folder
+            $url = Controller::join_links(
+                Director::baseURL(),
+                $prefixedFilePath
+            );
+        
+        } else {
+            
+            // Switch slashes for URL
+            $relativeURL = Convert::slashes($relativePath, '/');
+            
+            // Apply url rewrites
+            $rules = Config::inst()->get(static::class, 'url_rewrites') ?: [];
+            foreach ($rules as $from => $to) {
+                $relativeURL = preg_replace($from, $to, $relativeURL);
             }
+            
+            $url = Controller::join_links(
+                Director::baseURL(),
+                $relativeURL
+            );
+            
         }
-
-        // build url to prefixed file in combined files folder
-        $url = Controller::join_links(
-            Director::baseURL(),
-            $prefixedFilePath
-        );
 
         // Add back querystring
         if ($query) {
@@ -104,5 +108,25 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         }
 
         return $url;
+    }
+    
+    public static function flush() {
+        $assetHandler = Requirements::backend()->getAssetHandler();
+        $combinedFilesFolder = Requirements::backend()->getCombinedFilesFolder();
+        
+        // remove old prefixed files
+        $filesystem = $assetHandler->getFilesystem();
+        $combinedFilesFolderContents = $filesystem->listContents($combinedFilesFolder);
+        foreach ($combinedFilesFolderContents as $item) {
+            $itemFileName = $item['basename'];
+            if (preg_match('/[a-z0-9]{32}-.*\.(js|css)/', $itemFileName)) {
+                $assetHandler->removeContent(
+                    File::join_paths(
+                        $combinedFilesFolder,
+                        $itemFileName
+                    )
+                );
+            }
+        }
     }
 }

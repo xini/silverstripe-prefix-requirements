@@ -1,6 +1,6 @@
 {
 	"name": "innoweb/silverstripe-prefix-requirements",
-	"description": "Adds a mtime prefix to all requirements. Replaces the default ?{mtime} suffix to make the requirements fully cacheable.",
+	"description": "Adds a file hash prefix to all requirements. Replaces the default ?{mtime} suffix to make the requirements fully cacheable.",
 	"type": "silverstripe-vendormodule",
 	"license": "BSD-3-Clause",
 	"keywords": ["silverstripe", "caching", "requirements", "prefix"],
