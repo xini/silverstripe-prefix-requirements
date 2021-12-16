@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.4]
+
+* Fix nonce usage
+* remove obsolete .htaccess file
+
 ## [2.0.3]
 
 * Fix flush functionality
