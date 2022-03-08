@@ -9,6 +9,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\SimpleResourceURLGenerator;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Manifest\ModuleResource;
@@ -17,7 +18,12 @@ use SilverStripe\View\Requirements;
 
 class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements ResourceURLGenerator, Flushable {
 
+    use Configurable;
+
     private $nonceStyle;
+
+    private static $nonce_style;
+    private static $use_postfix = false;
 
     public function setNonceStyle($nonceStyle)
     {
@@ -26,6 +32,17 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         }
         $this->nonceStyle = $nonceStyle;
         return $this;
+    }
+
+    public function getNonceStyle()
+    {
+        if (($style = Config::inst()->get(static::class, 'nonce_style')) && in_array($style, ['mtime', 'sha1', 'md5'])) {
+            return $style;
+        }
+        if (($style = $this->nonceStyle) && in_array($style, ['mtime', 'sha1', 'md5'])) {
+            return $style;
+        }
+        return null;
     }
 
     public function urlForResource($relativePath)
@@ -70,12 +87,13 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         if ($exists && is_file($absolutePath)) {
 
             // get file name
-            $pathArr = explode(DIRECTORY_SEPARATOR, $absolutePath);
-            $fileName = end($pathArr);
+            $pathArr = pathinfo($absolutePath);
+            $fileName = $pathArr['filename'];
+            $extension = $pathArr['extension'];
 
             // get prefix
-            if ($this->nonceStyle) {
-                switch ($this->nonceStyle) {
+            if ($nonceStyle = $this->getNonceStyle()) {
+                switch ($nonceStyle) {
                     case 'mtime':
                         $method = 'filemtime';
                         break;
@@ -86,19 +104,24 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
                         $method = 'md5_file';
                         break;
                 }
-                $prefix = call_user_func($method, $absolutePath) . '-';
+                $prefix = call_user_func($method, $absolutePath);
             } else {
-                $prefix = base_convert(md5_file($absolutePath), 16, 36) . '-';
+                $prefix = base_convert(md5_file($absolutePath), 16, 36);
             }
 
             // get combined files folder, prefix file name and put in folder
             $assetHandler = Requirements::backend()->getAssetHandler();
             $combinedFilesFolder = Requirements::backend()->getCombinedFilesFolder();
 
+            $newFileName = $prefix . '-' . $fileName . '.' . $extension;
+            if (self::config()->use_postfix) {
+                $newFileName = $fileName . '-' . $prefix . '.' . $extension;
+            }
+
             $prefixedFilePath = $assetHandler->getContentURL(
                 File::join_paths(
                     $combinedFilesFolder,
-                    $prefix . $fileName
+                    $newFileName
                 ),
                 function() use ($absolutePath) {
                     return file_get_contents($absolutePath);

@@ -6,4 +6,4 @@ SilverStripe\Core\Injector\Injector:
   SilverStripe\Core\Manifest\ResourceURLGenerator:
     class: Innoweb\PrefixRequirements\Control\PrefixResourceURLGenerator
     properties:
-      NonceStyle: mtime
+      nonceStyle: mtime

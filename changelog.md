@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.0]
+
+* make nonce style configurable using SS config
+* add config option to use postfix instead of prefix
+
 ## [2.0.4]
 
 * Fix nonce usage
