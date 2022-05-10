@@ -11,7 +11,8 @@
 	}],
 	"require":
 	{
-		"silverstripe/framework": "^4"
+		"silverstripe/framework": "^4",
+		"webmozart/glob": "^4.4.0"
 	},
 	"autoload": {
 		"psr-4": {

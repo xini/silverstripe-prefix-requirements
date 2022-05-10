@@ -15,6 +15,7 @@ use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Manifest\ModuleResource;
 use SilverStripe\Core\Manifest\ResourceURLGenerator;
 use SilverStripe\View\Requirements;
+use Webmozart\Glob\Glob;
 
 class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements ResourceURLGenerator, Flushable {
 
@@ -24,6 +25,7 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
 
     private static $nonce_style;
     private static $use_postfix = false;
+    private static $excluded_resources = [];
 
     public function setNonceStyle($nonceStyle)
     {
@@ -45,9 +47,39 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         return null;
     }
 
+    public function isResourceExcludedFromPrefixing($relativePath): bool
+    {
+        $isExcluded = false;
+        $excludedPaths = Config::inst()->get(static::class, 'excluded_resources');
+        if (!empty($excludedPaths))
+        {
+            if ($relativePath instanceof ModuleResource) {
+                $relativePath = $relativePath->getRelativePath();
+            }
+            if (!is_string($relativePath)) {
+                return $isExcluded;
+            }
+            $relativePath = '/' . $relativePath;
+            foreach ($excludedPaths as $path)
+            {
+                $path = '/' . $path;
+                if (Glob::match($relativePath, $path)) {
+                    $isExcluded = true;
+                    break;
+                }
+            }
+        }
+        return $isExcluded;
+    }
+
     public function urlForResource($relativePath)
     {
         if (!Controller::has_curr() || is_a(Controller::curr(), LeftAndMain::class)) {
+            return parent::urlForResource($relativePath);
+        }
+
+        $isExcluded = $this->isResourceExcludedFromPrefixing($relativePath);
+        if ($isExcluded) {
             return parent::urlForResource($relativePath);
         }
 
