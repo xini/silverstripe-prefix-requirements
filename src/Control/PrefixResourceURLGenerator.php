@@ -14,6 +14,7 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Manifest\ModuleResource;
 use SilverStripe\Core\Manifest\ResourceURLGenerator;
+use SilverStripe\Dev\Debug;
 use SilverStripe\View\Requirements;
 use Webmozart\Glob\Glob;
 
@@ -59,10 +60,10 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
             if (!is_string($relativePath)) {
                 return $isExcluded;
             }
-            $relativePath = '/' . $relativePath;
+            $relativePath = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
             foreach ($excludedPaths as $path)
             {
-                $path = '/' . $path;
+                $path = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $path);
                 if (Glob::match($relativePath, $path)) {
                     $isExcluded = true;
                     break;
