@@ -194,7 +194,7 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         $filesystem = $assetHandler->getFilesystem();
         $combinedFilesFolderContents = $filesystem->listContents($combinedFilesFolder);
         foreach ($combinedFilesFolderContents as $item) {
-            $itemFileName = $item['basename'];
+            $itemFileName = $item['basename'] ?? '';
             if (preg_match('/([a-z0-9]{10,32}-.*|.*-[a-z0-9]{10,32})\.(js|css)/', $itemFileName)) {
                 $assetHandler->removeContent(
                     File::join_paths(
