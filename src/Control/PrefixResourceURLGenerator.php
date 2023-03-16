@@ -14,7 +14,6 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Manifest\ModuleResource;
 use SilverStripe\Core\Manifest\ResourceURLGenerator;
-use SilverStripe\Dev\Debug;
 use SilverStripe\View\Requirements;
 use Webmozart\Glob\Glob;
 
@@ -96,13 +95,7 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
                 list($relativePath, $query) = explode('?', $relativePath);
             }
 
-            // Determine lookup mechanism based on existence of public/ folder.
-            // From 5.0 onwards only resolvePublicResource() will be used.
-            if (!Director::publicDir()) {
-                list($exists, $absolutePath, $relativePath) = $this->resolveUnsecuredResource($relativePath);
-            } else {
-                list($exists, $absolutePath, $relativePath) = $this->resolvePublicResource($relativePath);
-            }
+            list($exists, $absolutePath, $relativePath) = $this->resolvePublicResource($relativePath);
         }
         if (!$exists) {
             trigger_error("File {$relativePath} does not exist", E_USER_NOTICE);
@@ -202,7 +195,7 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         $combinedFilesFolderContents = $filesystem->listContents($combinedFilesFolder);
         foreach ($combinedFilesFolderContents as $item) {
             $itemFileName = $item['basename'];
-            if (preg_match('/[a-z0-9]{20,32}-.*\.(js|css)/', $itemFileName)) {
+            if (preg_match('/([a-z0-9]{10,32}-.*|.*-[a-z0-9]{10,32})\.(js|css)/', $itemFileName)) {
                 $assetHandler->removeContent(
                     File::join_paths(
                         $combinedFilesFolder,
