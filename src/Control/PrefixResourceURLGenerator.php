@@ -91,8 +91,8 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
             return $relativePath;
         } else {
             // Save querystring for later
-            if (strpos($relativePath, '?') !== false) {
-                list($relativePath, $query) = explode('?', $relativePath);
+            if (strpos($relativePath ?? '', '?') !== false) {
+                list($relativePath, $query) = explode('?', $relativePath ?? '');
             }
 
             list($exists, $absolutePath, $relativePath) = $this->resolvePublicResource($relativePath);
@@ -107,10 +107,10 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
         // Apply url rewrites
         $rules = Config::inst()->get(static::class, 'url_rewrites') ?: [];
         foreach ($rules as $from => $to) {
-            $relativeURL = preg_replace($from, $to, $relativeURL);
+            $relativeURL = preg_replace($from ?? '', $to ?? '', $relativeURL ?? '');
         }
 
-        if ($exists && is_file($absolutePath)) {
+        if ($exists && is_file($absolutePath ?? '')) {
 
             // get file name
             $pathArr = pathinfo($absolutePath);
@@ -162,20 +162,10 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
 
         } else {
 
-            // Switch slashes for URL
-            $relativeURL = Convert::slashes($relativePath, '/');
-
-            // Apply url rewrites
-            $rules = Config::inst()->get(static::class, 'url_rewrites') ?: [];
-            foreach ($rules as $from => $to) {
-                $relativeURL = preg_replace($from, $to, $relativeURL);
-            }
-
             $url = Controller::join_links(
                 Director::baseURL(),
                 $relativeURL
             );
-
         }
 
         // Add back querystring
