@@ -92,8 +92,8 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
             return $relativePath;
         } else {
             // Save querystring for later
-            if (strpos($relativePath, '?') !== false) {
-                list($relativePath, $query) = explode('?', $relativePath);
+            if (strpos($relativePath ?? '', '?') !== false) {
+                list($relativePath, $query) = explode('?', $relativePath ?? '');
             }
 
             // Determine lookup mechanism based on existence of public/ folder.
