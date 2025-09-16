@@ -74,7 +74,8 @@ class PrefixResourceURLGenerator extends SimpleResourceURLGenerator implements R
 
     public function urlForResource($relativePath)
     {
-        if (!Controller::has_curr() || is_a(Controller::curr(), LeftAndMain::class)) {
+        $curr = Controller::curr();
+        if (is_null($curr) || is_a($curr, LeftAndMain::class)) {
             return parent::urlForResource($relativePath);
         }
 

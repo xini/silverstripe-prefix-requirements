@@ -12,7 +12,7 @@
 	"require":
 	{
 		"silverstripe/framework": "^5",
-		"webmozart/glob": "^4.6.0"
+		"webmozart/glob": "^4.7.0"
 	},
 	"autoload": {
 		"psr-4": {
