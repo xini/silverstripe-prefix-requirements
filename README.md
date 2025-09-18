@@ -12,11 +12,7 @@ It is recommended to minify CSS files using Grunt or Gulp (or any other techniqu
 
 ## Requirements
 
-* SilverStripe CMS 5.x
-
-Note: this version is compatible with SilverStripe 5.
-For SilverStripe 4, please see the [2.x release line](https://github.com/xini/silverstripe-prefix-requirements/tree/2).
-For SilverStripe 3, please see the [1.x release line](https://github.com/xini/silverstripe-prefix-requirements/tree/1).
+* Silverstripe CMS 5.x or 6.x
 
 ## Installation
 
