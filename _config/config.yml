@@ -7,3 +7,7 @@ SilverStripe\Core\Injector\Injector:
     class: Innoweb\PrefixRequirements\Control\PrefixResourceURLGenerator
     properties:
       nonceStyle: mtime
+
+Innoweb\PrefixRequirements\Control\PrefixResourceURLGenerator:
+  excluded_resources:
+    - 'themes/startup-theme/css/startup.css'
