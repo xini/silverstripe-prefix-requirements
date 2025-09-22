@@ -12,7 +12,7 @@ It is recommended to minify CSS files using Grunt or Gulp (or any other techniqu
 
 ## Requirements
 
-* Silverstripe CMS 5.x or 6.x
+* Silverstripe CMS 6.x
 
 ## Installation
 
