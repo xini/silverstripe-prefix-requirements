@@ -11,3 +11,4 @@ SilverStripe\Core\Injector\Injector:
 Innoweb\PrefixRequirements\Control\PrefixResourceURLGenerator:
   excluded_resources:
     - 'themes/startup-theme/css/startup.css'
+    - 'vendor/wilr/silverstripe-googlesitemaps/**/*'

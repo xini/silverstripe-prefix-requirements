@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.0]
+
+*  exclude wilr/silverstripe-googlesitemaps resources from being prefixed
+
 ## [4.0.0]
 
 *  upgrade to Silverstripe 6
